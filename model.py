@@ -16,7 +16,7 @@ class Brats_model(nn.Module):
             out_channels=3,  # 3 overlapping tumor sub-regions: WT, TC, ET
             channels=(32, 64, 128, 256),  # Feature map filters (powers of 2 for hardware optimization)
             strides=(2, 2, 2),  # Downsampling steps for spatial reduction
-            norm="GROUP"  # Group Normalization: prevents math crash when batch_size=1 due to VRAM limits
+            norm=("GROUP", {"num_groups": 2})  # Group Normalization: prevents math crash when batch_size=1 due to VRAM limits
         )
 
     def forward(self,x):
