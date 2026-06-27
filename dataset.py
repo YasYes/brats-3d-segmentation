@@ -8,29 +8,33 @@ from monai.transforms import Compose, LoadImaged, EnsureChannelFirstd, Orientati
 import os
 import glob
 
+import os
+import glob
+
 
 def get_bts_data_list(data_dir: str):
-    """
-    Corrected path to match the Kaggle file structure.
-    """
-    # On reconstruit le chemin exact vers les dossiers patients
-    base_path = "/kaggle/input/datasets/awsaf49/brats20-dataset-training-validation/BraTS2020_TrainingData/MICCAI_BraTS2020_TrainingData/"
-    search_path = os.path.join(base_path, "BraTS20_Training_*")
+    # data_dir est : "/kaggle/input/datasets/awsaf49/brats20-dataset-training-validation/"
+    # Vos dossiers patients sont : .../BraTS2020_TrainingData/MICCAI_BraTS2020_TrainingData/BraTS20_Training_XXX
 
-    patient_dirs = sorted(glob.glob(search_path))
+    # On utilise '**' pour dire à glob de chercher dans TOUS les sous-dossiers
+    search_pattern = os.path.join(data_dir, "**", "BraTS20_Training_*")
+
+    # recursive=True est la clé pour fouiller toute l'arborescence
+    patient_dirs = sorted(glob.glob(search_pattern, recursive=True))
 
     data_list = []
 
     for patient_dir in patient_dirs:
-        # Vos fichiers se terminent par .nii, on ajuste le pattern
-        image_files = glob.glob(os.path.join(patient_dir, "*_t1ce.nii"))
-        label_files = glob.glob(os.path.join(patient_dir, "*_seg.nii"))
+        # On vérifie si le dossier contient bien des fichiers .nii
+        if os.path.isdir(patient_dir):
+            image_files = glob.glob(os.path.join(patient_dir, "*_t1ce.nii"))
+            label_files = glob.glob(os.path.join(patient_dir, "*_seg.nii"))
 
-        if image_files and label_files:
-            data_list.append({
-                "image": image_files[0],
-                "label": label_files[0]
-            })
+            if image_files and label_files:
+                data_list.append({
+                    "image": image_files[0],
+                    "label": label_files[0]
+                })
 
     return data_list
 
