@@ -32,6 +32,7 @@ def get_loss_function():
     Strictly avoids Softmax to prevent mathematical coupling between overlapping classes.
     """
     return DiceLoss(
+        to_onehot_y=True,
         include_background=False,  # Exclude the black background (healthy tissue/air) from the loss calculation
         sigmoid=True,  # Applies Sigmoid internally to convert raw logits into independent probabilities
         squared_pred=True  # Squares the predictions in the denominator to stabilize gradients for small tumors

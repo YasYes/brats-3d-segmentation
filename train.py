@@ -35,6 +35,11 @@ def train(data_dir:str, batch_size :int=1, epochs: int=50):
             image=batch_data["image"].to(device)
             label=batch_data["label"].to(device)
 
+            if len(label.shape) == 4:
+                label = label.unsqueeze(1)
+
+            label = (label > 0).float()
+
             optimizer.zero_grad()
             output=model(image)
             loss=loss_function(output,label)
