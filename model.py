@@ -1,5 +1,5 @@
 import torch as nn
-from monai.networks.nets import UNet
+from monai.networks.nets.unet import UNet
 from monai.losses import DiceLoss
 
 class Brats_model(nn.Module):
