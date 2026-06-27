@@ -5,34 +5,33 @@ from monai.data import DataLoader, Dataset
 from monai.transforms import Compose, LoadImaged, EnsureChannelFirstd, Orientationd, Spacingd, NormalizeIntensityd, \
     RandSpatialCropd, EnsureTyped
 
+import os
+import glob
+
 
 def get_bts_data_list(data_dir: str):
     """
-    Scans the BraTS 2020 directory structure using the exact path found on Kaggle.
+    Scans for patient folders regardless of the nested depth.
     """
-    # The search path must match the nested structure identified
-    search_path = os.path.join(
-        data_dir,
-        "BraTS2020_TrainingData",
-        "MICCAI_BraTS2020_TrainingData",
-        "BraTS20_Training_*"
-    )
-    patient_dirs = sorted(glob.glob(search_path))
-    print(f"DEBUG : Chemins trouvés par glob : {len(patient_dirs)}")
+    # On cherche récursivement tous les dossiers contenant 'BraTS20_Training_'
+    search_pattern = os.path.join(data_dir, "**", "BraTS20_Training_*")
+    patient_dirs = sorted(glob.glob(search_pattern, recursive=True))
 
     data_list = []
 
     for patient_dir in patient_dirs:
-        # Looking for .nii files as per your file structure
-        image_files = glob.glob(os.path.join(patient_dir, "*_t1ce.nii"))
-        label_files = glob.glob(os.path.join(patient_dir, "*_seg.nii"))
+        # On vérifie si c'est bien un dossier (et non un fichier)
+        if os.path.isdir(patient_dir):
+            image_files = glob.glob(os.path.join(patient_dir, "*_t1ce.nii"))
+            label_files = glob.glob(os.path.join(patient_dir, "*_seg.nii"))
 
-        if image_files and label_files:
-            data_list.append({
-                "image": image_files[0],
-                "label": label_files[0]
-            })
+            if image_files and label_files:
+                data_list.append({
+                    "image": image_files[0],
+                    "label": label_files[0]
+                })
 
+    print(f"DEBUG: Scanned {len(patient_dirs)} potential folders. Found {len(data_list)} valid pairs.")
     return data_list
 
 def get_transforms(roi_size=(64,64,64)):
