@@ -1,4 +1,4 @@
-import torch as nn
+import torch.nn as nn
 from monai.networks.nets.unet import UNet
 from monai.losses import DiceLoss
 
