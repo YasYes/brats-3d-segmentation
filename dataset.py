@@ -1,33 +1,39 @@
 from monai.data import DataLoader, Dataset
 from monai.transforms import Compose, LoadImaged, EnsureChannelFirstd, Orientationd, Spacingd, NormalizeIntensityd, \
     RandSpatialCropd, EnsureTyped
-
 import os
 import glob
 
 
 def get_bts_data_list(data_dir: str):
     """
-    Scans the BraTS 2020 directory structure to retrieve image and label paths.
+    Scans the BraTS 2020 directory and groups the 4 MRI modalities for each patient.
+    Returns a list of dictionaries containing paths to the stacked images and their labels.
     """
-    # Define the validated base path
+    # Define the absolute base path validated on Kaggle
     base = "/kaggle/input/datasets/awsaf49/brats20-dataset-training-validation/BraTS2020_TrainingData/MICCAI_BraTS2020_TrainingData/"
 
-    # Retrieve all patient directories
+    # Retrieve all patient directories matching the expected pattern
     patient_dirs = sorted(glob.glob(os.path.join(base, "BraTS20_Training_*")))
 
     data_list = []
 
     for patient_dir in patient_dirs:
-        # Find required files within the directory
-        image_files = glob.glob(os.path.join(patient_dir, "*_t1ce.nii"))
-        label_files = glob.glob(os.path.join(patient_dir, "*_seg.nii"))
+        # Search for the 4 distinct MRI modalities
+        t1 = glob.glob(os.path.join(patient_dir, "*_t1.nii"))
+        t1ce = glob.glob(os.path.join(patient_dir, "*_t1ce.nii"))
+        t2 = glob.glob(os.path.join(patient_dir, "*_t2.nii"))
+        flair = glob.glob(os.path.join(patient_dir, "*_flair.nii"))
 
-        # Add to list only if both files exist
-        if image_files and label_files:
+        # Search for the corresponding segmentation mask
+        seg = glob.glob(os.path.join(patient_dir, "*_seg.nii"))
+
+        # Ensure all 5 files (4 modalities + 1 mask) exist before creating a pair
+        if t1 and t1ce and t2 and flair and seg:
             data_list.append({
-                "image": image_files[0],
-                "label": label_files[0]
+                # MONAI will automatically stack this list into a 4-channel 3D tensor during data loading
+                "image": [t1[0], t1ce[0], t2[0], flair[0]],
+                "label": seg[0]
             })
 
     return data_list
