@@ -18,6 +18,7 @@ def get_bts_data_list(data_dir: str):
         "BraTS20_Training_*"
     )
     patient_dirs = sorted(glob.glob(search_path))
+    print(f"DEBUG : Chemins trouvés par glob : {len(patient_dirs)}")
 
     data_list = []
 
