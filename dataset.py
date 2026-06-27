@@ -1,6 +1,3 @@
-import glob
-import os
-
 from monai.data import DataLoader, Dataset
 from monai.transforms import Compose, LoadImaged, EnsureChannelFirstd, Orientationd, Spacingd, NormalizeIntensityd, \
     RandSpatialCropd, EnsureTyped
@@ -8,33 +5,36 @@ from monai.transforms import Compose, LoadImaged, EnsureChannelFirstd, Orientati
 import os
 import glob
 
-import os
-import glob
-
 
 def get_bts_data_list(data_dir: str):
-    # data_dir est : "/kaggle/input/datasets/awsaf49/brats20-dataset-training-validation/"
-    # Vos dossiers patients sont : .../BraTS2020_TrainingData/MICCAI_BraTS2020_TrainingData/BraTS20_Training_XXX
+    """
+    Scans the BraTS 2020 directory structure using the validated absolute path.
+    """
+    # Using the absolute path validated by your diagnostic script
+    base = "/kaggle/input/datasets/awsaf49/brats20-dataset-training-validation/BraTS2020_TrainingData/MICCAI_BraTS2020_TrainingData/"
 
-    # On utilise '**' pour dire à glob de chercher dans TOUS les sous-dossiers
-    search_pattern = os.path.join(data_dir, "**", "BraTS20_Training_*")
+    # Searching for all patient directories matching the pattern
+    search_path = os.path.join(base, "BraTS20_Training_*")
+    patient_dirs = sorted(glob.glob(search_path))
 
-    # recursive=True est la clé pour fouiller toute l'arborescence
-    patient_dirs = sorted(glob.glob(search_pattern, recursive=True))
+    print(f"DEBUG: Je cherche dans {base}, dossiers trouvés : {len(patient_dirs)}")
 
     data_list = []
 
     for patient_dir in patient_dirs:
-        # On vérifie si le dossier contient bien des fichiers .nii
-        if os.path.isdir(patient_dir):
-            image_files = glob.glob(os.path.join(patient_dir, "*_t1ce.nii"))
-            label_files = glob.glob(os.path.join(patient_dir, "*_seg.nii"))
+        # Looking for files ending exactly with _t1ce.nii and _seg.nii
+        image_files = glob.glob(os.path.join(patient_dir, "*_t1ce.nii"))
+        label_files = glob.glob(os.path.join(patient_dir, "*_seg.nii"))
 
-            if image_files and label_files:
-                data_list.append({
-                    "image": image_files[0],
-                    "label": label_files[0]
-                })
+        # We only add the pair if both files are present
+        if image_files and label_files:
+            data_list.append({
+                "image": image_files[0],
+                "label": label_files[0]
+            })
+
+    # Final check to confirm we found valid data
+    print(f"DEBUG: Nombre de paires (image, label) créées : {len(data_list)}")
 
     return data_list
 
