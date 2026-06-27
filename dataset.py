@@ -5,28 +5,31 @@ from monai.data import DataLoader, Dataset
 from monai.transforms import Compose, LoadImaged, EnsureChannelFirstd, Orientationd, Spacingd, NormalizeIntensityd, \
     RandSpatialCropd, EnsureTyped
 
-
 def get_bts_data_list(data_dir: str):
     """
-    Scans the BraTS 2020 nested directory structure and builds
-    the dictionary list for the MONAI pipeline.
+    Scans the BraTS 2020 directory structure based on the actual Kaggle path.
+    Builds a list of dictionaries containing paths to T1ce images and segmentation masks.
     """
-    # Locate all patient subdirectories
-    search_path = os.path.join(data_dir, "MICCAI_BraTS2020_TrainingData", "BraTS20_Training_*")
+    # Define the search path for patient directories
+    search_path = os.path.join(data_dir, "BraTS2020_TrainingData", "MICCAI_BraTS2020_TrainingData",
+                               "BraTS20_Training_*")
     patient_dirs = sorted(glob.glob(search_path))
 
     data_list = []
 
     for patient_dir in patient_dirs:
-        # Retrieve absolute paths for T1ce (image) and seg (label) files
-        # Using glob to match specific suffixes within each patient folder
-        image_path = glob.glob(os.path.join(patient_dir, "*_t1ce.nii.gz"))[0]
-        label_path = glob.glob(os.path.join(patient_dir, "*_seg.nii.gz"))[0]
+        # Locate the specific T1ce image and the segmentation mask
+        image_files = glob.glob(os.path.join(patient_dir, "*_t1ce.nii"))
+        label_files = glob.glob(os.path.join(patient_dir, "*_seg.nii"))
 
-        data_list.append({
-            "image": image_path,
-            "label": label_path
-        })
+        # Safety check: ensure both files exist before adding to the list
+        if image_files and label_files:
+            data_list.append({
+                "image": image_files[0],
+                "label": label_files[0]
+            })
+        else:
+            print(f"Warning: Missing files in {patient_dir}")
 
     return data_list
 
