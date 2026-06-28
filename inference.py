@@ -58,3 +58,5 @@ def run_inference(model_path,image_paths,output_path):
     nifti_image = nib.Nifti1Image(pred_numpy.astype(np.uint8), original_affine)
     nib.save(nifti_image,output_path)
 
+    return loaded_data["image"][1].cpu().numpy(), pred_numpy
+
