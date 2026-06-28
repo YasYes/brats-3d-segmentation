@@ -1,6 +1,7 @@
 import monai
 import torch
-from monai.data.utils import nib
+import nibabel as nib
+import numpy as np
 from monai.inferers import sliding_window_inference
 
 from model import Brats_model
@@ -39,7 +40,7 @@ def run_inference(model_path,image_paths,output_path):
 
     with torch.no_grad():
         logits=sliding_window_inference(
-            input=image_tensor,
+            inputs=image_tensor,
             roi_size=(64,64,64),
             sw_batch_size=4,
             predictor=model
@@ -54,6 +55,6 @@ def run_inference(model_path,image_paths,output_path):
         pred_numpy=pred_numpy[1]
 
     original_affine=loaded_data["image"].meta["affine"]
-    nifti_image=nib.Nifti1Image(pred_numpy,original_affine)
+    nifti_image = nib.Nifti1Image(pred_numpy.astype(np.uint8), original_affine)
     nib.save(nifti_image,output_path)
 
