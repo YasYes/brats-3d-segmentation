@@ -39,11 +39,13 @@ def run_inference(model_path,image_paths,output_path):
     image_tensor=loaded_data["image"].unsqueeze(0).to(device)
 
     with torch.no_grad():
-        logits=sliding_window_inference(
+        logits = sliding_window_inference(
             inputs=image_tensor,
-            roi_size=(64,64,64),
+            roi_size=(64, 64, 64),
             sw_batch_size=4,
-            predictor=model
+            predictor=model,
+            overlap=0.5,             # 1. On augmente le chevauchement (50%)
+            blend_mode="gaussian"    # 2. On utilise une pondération gaussienne
         )
 
     probabilities=torch.sigmoid(logits)
