@@ -44,8 +44,8 @@ def run_inference(model_path,image_paths,output_path):
             roi_size=(64, 64, 64),
             sw_batch_size=4,
             predictor=model,
-            overlap=0.5,             # 1. On augmente le chevauchement (50%)
-            blend_mode="gaussian"    # 2. On utilise une pondération gaussienne
+            overlap=0.5,
+            blend_mode="gaussian"
         )
 
     probabilities=torch.sigmoid(logits)
