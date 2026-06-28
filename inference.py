@@ -45,7 +45,7 @@ def run_inference(model_path,image_paths,output_path):
             sw_batch_size=4,
             predictor=model,
             overlap=0.5,
-            blend_mode="gaussian"
+            mode="gaussian"
         )
 
     probabilities=torch.sigmoid(logits)
