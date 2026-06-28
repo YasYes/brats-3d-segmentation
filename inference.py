@@ -49,7 +49,7 @@ def run_inference(model_path,image_paths,output_path):
         )
 
     probabilities=torch.sigmoid(logits)
-    prediction=(probabilities>0.5).float()
+    prediction = (probabilities > 0.75).float()
 
     pred_numpy=prediction.squeeze(0).cpu().numpy()
 
