@@ -106,7 +106,7 @@ def get_transforms(roi_size=(64,64,64)):
         EnsureTyped(keys=["image", "label"])
     ])
 
-def get_dataloader(data_dir:str,batch_size:int=1,roi_size=(64,64,64)):
+def get_dataloaders(data_dir:str,batch_size:int=1,roi_size=(64,64,64)):
 
     data_list,data_list_val=get_bts_data_lists(data_dir)
 
