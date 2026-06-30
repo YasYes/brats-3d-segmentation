@@ -25,10 +25,10 @@ The current baseline model (a standard 3D U-Net architecture) demonstrates stron
 
 *(Performance Overview: Transformed T1ce MRI vs. Ground Truth vs. Model Prediction)*
 
-`[Insert your screenshot here showing the MRI and the red prediction mask]`
+![img.png](img.png)
 > *Caption: Overlay of the exclusive tumor channel prediction (in red) on an axial slice of a T1ce MRI. Display generated directly from the Kaggle inference pipeline.*
 
-`[Insert a second relevant screenshot here if needed]`
+![img_1.png](img_1.png)
 
 ## 🚀 Perspectives for Improvement (Next Steps)
 This project reflects my commitment to continuous learning. Currently, the training loss shows signs of plateauing around 0.81. To break through this glass ceiling and handle highly complex cases, the next development steps are:
