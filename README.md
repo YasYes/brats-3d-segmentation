@@ -23,7 +23,7 @@ To ensure scientifically rigorous results and avoid common machine learning bias
 ## 📊 Current Results
 The current baseline model (a standard 3D U-Net architecture) demonstrates strong generalization capabilities on unseen patients, achieving global Dice scores of **~0.84 to ~0.89** on validation volumes.
 
-*(Performance Overview: Transformed T1ce MRI vs. Ground Truth vs. Model Prediction)*
+*(Performance Overview: Transformed T1ce MRI vs. Model Prediction)*
 
 ![img.png](img.png)
 > *Caption: Overlay of the exclusive tumor channel prediction (in red) on an axial slice of a T1ce MRI. Display generated directly from the Kaggle inference pipeline.*
