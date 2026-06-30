@@ -1,39 +1,40 @@
+import torch
 import torch.nn as nn
 from monai.networks.nets.unet import UNet
 from monai.losses import DiceLoss
+from typing import Tuple
 
 class Brats_model(nn.Module):
     """
     3D U-Net Architecture optimized for the BraTS medical dataset.
     Handles multi-modal inputs and nested multi-label segmentation.
     """
-    def __init__(self):
+    def __init__(self) -> None:
         super(Brats_model, self).__init__()
 
-        self.net=UNet(
-            spatial_dims=3,  # Specifies that inputs are 3D volumes (MRI), not 2D images
-            in_channels=4,  # Stack of 4 MRI sequences: T1, T1Gd, T2, FLAIR
-            out_channels=3,  # 3 overlapping tumor sub-regions: WT, TC, ET
-            channels=(32, 64, 128, 256),  # Feature map filters (powers of 2 for hardware optimization)
-            strides=(2, 2, 2),  # Downsampling steps for spatial reduction
-            norm=("GROUP", {"num_groups": 2})  # Group Normalization: prevents math crash when batch_size=1 due to VRAM limits
+        self.net: nn.Module = UNet(
+            spatial_dims=3,
+            in_channels=4,
+            out_channels=3,
+            channels=(32, 64, 128, 256),
+            strides=(2, 2, 2),
+            norm=("GROUP", {"num_groups": 2})
         )
 
-    def forward(self,x):
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
         """
-         Forward pass.
-         Note: The network outputs raw logits, not probabilities.
+        Forward pass.
+        Returns: Raw logits.
         """
         return self.net(x)
 
-def get_loss_function():
+def get_loss_function() -> DiceLoss:
     """
     Returns the Dice Loss configured for independent marginal probabilities.
-    Strictly avoids Softmax to prevent mathematical coupling between overlapping classes.
     """
     return DiceLoss(
         to_onehot_y=True,
-        include_background=False,  # Exclude the black background (healthy tissue/air) from the loss calculation
-        sigmoid=True,  # Applies Sigmoid internally to convert raw logits into independent probabilities
-        squared_pred=True  # Squares the predictions in the denominator to stabilize gradients for small tumors
+        include_background=False,
+        sigmoid=True,
+        squared_pred=True
     )
