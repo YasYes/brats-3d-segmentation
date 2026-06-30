@@ -61,7 +61,7 @@ def run_inference(model_path,image_paths,label_paths, output_path):
 
     dice_metric(y_pred=prediction, y=label_tensor)
     final_dice = dice_metric.aggregate().item()
-    print(f"✅ Inference complete! 3D Dice Score: {final_dice:.4f}")
+    print(f"Inference complete! 3D Dice Score: {final_dice:.4f}")
 
     pred_numpy=prediction.squeeze(0).cpu().numpy()
 

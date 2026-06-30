@@ -95,7 +95,7 @@ def train(data_dir:str, batch_size :int=1, epochs: int=50):
 
         metric = dice_metric.aggregate().item()
 
-        # On remet la calculatrice à zéro pour la prochaine époque
+
         dice_metric.reset()
 
         print(f"Epoch {epoch + 1}/{epochs} - Val Dice: {metric:.4f}")
@@ -108,7 +108,6 @@ def train(data_dir:str, batch_size :int=1, epochs: int=50):
             print(f"New best model saved! Dice improved to: {best_metric:.4f}")
 
 if __name__ == "__main__":
-    # Point this to your local or Kaggle dataset path
     train(data_dir="/kaggle/input/datasets/awsaf49/brats20-dataset-training-validation")
 
 
