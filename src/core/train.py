@@ -1,15 +1,13 @@
 import torch
 import torch.optim
-from torch import device
-from typing import Tuple
 
 from monai.metrics import DiceMetric
 from monai.transforms import AsDiscrete
 from monai.data import decollate_batch
 from monai.inferers import sliding_window_inference
 
-from dataset import get_dataloaders
-from model import Brats_model, get_loss_function
+from src.data.dataset import get_dataloaders
+from src.models.model import Brats_model, get_loss_function
 
 
 def train(data_dir: str, batch_size: int = 1, epochs: int = 50) -> None:

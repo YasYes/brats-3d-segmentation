@@ -7,7 +7,7 @@ from monai.metrics import DiceMetric
 from monai.transforms import Compose, LoadImaged, EnsureChannelFirstd, Orientationd, Spacingd, NormalizeIntensityd, \
     EnsureTyped
 
-from model import Brats_model
+from src.models.model import Brats_model
 
 
 def run_inference(
